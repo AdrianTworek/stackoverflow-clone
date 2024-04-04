@@ -1,0 +1,16 @@
+{% extends 'main/base.html' %} 
+
+{% block title %} StackOverflow Clone | Login {% endblock %} 
+
+{% load crispy_forms_tags %} 
+
+{% block content %}
+<div class="container">
+  <h2>Login</h2>
+  <form method="post" action="#">
+    {% csrf_token %} {{ form|crispy }}
+    <p>Don't have an account? <a href="{% url 'main:users:register' %}">Register</a></p>
+    <button type="submit" class="btn btn-primary">Login</button>
+  </form>
+</div>
+{% endblock %}
