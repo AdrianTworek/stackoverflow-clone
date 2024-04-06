@@ -1,5 +1,7 @@
 {% extends 'main/base.html' %} 
 
+{% load socialaccount %}
+
 {% block title %} StackOverflow Clone | Login {% endblock %} 
 
 {% load crispy_forms_tags %} 
@@ -11,6 +13,11 @@
       {% csrf_token %} {{ form|crispy }}
       <p>Don't have an account? <a href="{% url 'main:users:register' %}">Register</a></p>
       <button type="submit" class="btn btn-primary btn-lg w-100">Login</button>
+    </form>
+    <p class="my-2 text-center">or</p>
+    <form method="post" action="{% provider_login_url 'github' %}">
+      {% csrf_token %}
+      <button class="btn btn-dark btn-lg w-100 mt-2">Continue with GitHub</button>
     </form>
   </div>
 {% endblock %}
