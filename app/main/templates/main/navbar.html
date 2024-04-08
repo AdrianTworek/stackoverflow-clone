@@ -28,12 +28,17 @@
       </ul>
       <div>
         {% if user.is_authenticated %}
-        <form method="post" action="{% url 'main:users:logout' %}">
-          {% csrf_token %}
-          <button class="btn btn-outline-primary me-0" type="submit">
-            Logout
-          </button>
-        </form>
+        <div class="d-flex gap-2">
+          <a class="btn btn-primary" href="{% url 'main:users:profile' %}"
+            >Profile</a
+          >
+          <form method="post" action="{% url 'main:users:logout' %}">
+            {% csrf_token %}
+            <button class="btn btn-outline-primary me-0" type="submit">
+              Logout
+            </button>
+          </form>
+        </div>
         {% else %}
         <a
           class="btn btn-outline-primary"

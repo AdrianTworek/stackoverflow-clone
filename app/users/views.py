@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login as auth_login, logout as auth_logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from . import forms
 from main.decorators import anonymous_required
@@ -38,3 +39,8 @@ def logout(request):
     if request.method == 'POST':
         auth_logout(request)
         return redirect('main:users:login')
+
+
+@login_required()
+def profile(request):
+    return render(request, 'users/profile.html')
