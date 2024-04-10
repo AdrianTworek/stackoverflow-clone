@@ -28,6 +28,8 @@ def login(request):
         if form.is_valid():
             user = form.get_user()
             auth_login(request, user)
+            if 'next' in request.POST:
+                return redirect(request.POST.get('next'))
             return redirect('main:home')
     else:
         form = AuthenticationForm()
