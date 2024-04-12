@@ -1,0 +1,30 @@
+{% extends 'main/base.html' %} 
+
+{% load i18n %}
+
+{% block title %} 
+  StackOverflow Clone | Questions
+{% endblock %} 
+
+{% block content %}
+  <div class="container">
+    <h2>Questions: {{ questions_count }}</h2>
+    <div class="gap-4">
+      {% for question in questions %}
+        <div class="card my-3">
+          <div class="card-body">
+            <h5 class="card-title">{{ question.title }}</h5>
+            <p class="card-text">{{ question.content|truncatechars:255 }}</p>
+          </div>
+          <div class="card-footer d-flex align-items-center justify-content-between">
+            <a href="" class="btn btn-info">View Question</a>
+            <div class="d-flex gap-2 justify-content-center align-items-center">
+              <h6 class="card-text mb-0"><span class="text-muted">asked by</span> <img src="{{ question.author.profile.image.url }}" style="width: 20px; height: 20px; border-radius: 50%;" alt="{{ question.author.username }}'s avatar" /> {{ question.author.username }}</h6>
+              <span class="badge bg-secondary text-white">{{ question.created_at|date:_("d/m/Y, H:i") }}</span>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}
