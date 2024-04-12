@@ -73,6 +73,7 @@ INSTALLED_APPS = [
 
     'main',
     'users',
+    'questions'
 ]
 
 MIDDLEWARE = [
