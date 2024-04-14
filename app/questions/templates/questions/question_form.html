@@ -1,0 +1,17 @@
+{% extends 'main/base.html' %} 
+
+{% load crispy_forms_tags %} 
+
+{% block title %} 
+  StackOverflow Clone | Ask Question
+{% endblock %} 
+
+{% block content %}
+  <div class="container">
+    <h2>Ask a public question</h2>
+    <form method="post">
+      {% csrf_token %}
+      {{ form|crispy }}
+      <button type="submit" class="btn btn-warning">Ask Question</button>
+  </div>
+{% endblock %}

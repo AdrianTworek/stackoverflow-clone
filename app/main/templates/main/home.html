@@ -8,6 +8,7 @@
   <div class="container">
     <h1>StackOverflow Clone</h1>
     <p>Welcome to the StackOverflow Clone!</p>
-    <a href="{% url 'main:questions:question_list' %}" class="btn btn-warning">View Questions</a>
+    <a href="{% url 'main:questions:question_create' %}" class="btn btn-warning">Ask Question</a>
+    <a href="{% url 'main:questions:question_list' %}" class="btn btn-dark">View Questions</a>
   </div>
 {% endblock %}
