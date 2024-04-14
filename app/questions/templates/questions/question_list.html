@@ -12,7 +12,11 @@
         <div class="card my-3">
           <div class="card-body">
             <h5 class="card-title">{{ question.title }}</h5>
-            <p class="card-text">{{ question.content|truncatechars:255 }}</p>
+            {% if question.content|length > 255 %}
+              <p class="card-text">{{ question.content|truncatechars:255 }}<a href="{% url 'main:questions:question_detail' question.id %}" class="btn btn-link">Read More</a></p>
+            {% else %}
+              <p class="card-text">{{ question.content }}</p>
+            {% endif %}
           </div>
           <div class="card-footer d-flex align-items-center justify-content-between">
             <a href="{% url 'main:questions:question_detail' question.id %}" class="btn btn-info">View Question</a>
