@@ -6,7 +6,10 @@
 
 {% block content %}
   <div class="container">
-    <h2>Questions: {{ questions_count }}</h2>
+    <div class="d-flex align-items-center justify-content-between">
+      <h2>Questions: {{ questions_count }}</h2>
+      <a href="{% url 'main:questions:question_create' %}" class="btn btn-warning">Ask a Question</a>
+    </div>
     <div class="gap-4">
       {% for question in questions %}
         <div class="card my-3">
