@@ -1,0 +1,23 @@
+{% extends 'main/base.html' %} 
+
+{% block title %} 
+  StackOverflow Clone | Tags
+{% endblock %} 
+
+{% block content %}
+  <div class="container">
+    <div class="d-flex align-items-center justify-content-between">
+      <h2>Tags: {{ tags_count }}</h2>
+      <a href="{% url 'main:questions:tag_create' %}" class="btn btn-warning">Create Tag</a>
+    </div>
+    <div>
+      {% for tag in tags %}
+        <div class="card my-3">
+          <div class="card-body">
+            <strong>#{{ tag.name }}</strong> | {{ tag.questions.count }} questions
+          </div> 
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}

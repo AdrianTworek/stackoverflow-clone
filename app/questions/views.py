@@ -1,6 +1,7 @@
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from .models import Question
+from django.db.models import Count
+from .models import Question, Tag
 
 
 class QuestionListView(generic.ListView):
@@ -48,3 +49,31 @@ class QuestionDeleteView(LoginRequiredMixin, UserPassesTestMixin, generic.Delete
     def test_func(self):
         question = self.get_object()
         return self.request.user == question.author
+
+
+class TagListView(generic.ListView):
+    model = Tag
+    context_object_name = 'tags'
+    template_name = 'tags/tag_list.html'
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.annotate(questions_count=Count('questions'))
+        queryset = queryset.order_by('-questions_count')
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['tags_count'] = self.get_queryset().count()
+        return context
+
+
+class TagCreateView(LoginRequiredMixin, generic.CreateView):
+    model = Tag
+    fields = ['name']
+    template_name = 'tags/tag_create.html'
+    success_url = '/questions/tags'
+
+    def form_valid(self, form):
+        form.instance.name = form.instance.name.lower()
+        return super().form_valid(form)
