@@ -14,6 +14,11 @@
       {% for question in questions %}
         <div class="card my-3">
           <div class="card-body">
+            <div class="mb-2">
+              {% for tag in question.tags.all %}
+                <span class="badge bg-primary text-white">{{ tag.name }}</span>
+              {% endfor %}
+            </div>
             <h5 class="card-title">{{ question.title }}</h5>
             {% if question.content|length > 255 %}
               <p class="card-text">{{ question.content|truncatechars:255 }}<a href="{% url 'main:questions:question_detail' question.id %}" class="btn btn-link">Read More</a></p>
