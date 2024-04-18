@@ -20,7 +20,7 @@ class QuestionDetailView(generic.DetailView):
 
 class QuestionCreateView(LoginRequiredMixin, generic.CreateView):
     model = Question
-    fields = ['title', 'content']
+    fields = ['title', 'content', 'tags']
     template_name = 'questions/question_create.html'
 
     def form_valid(self, form):
@@ -30,7 +30,7 @@ class QuestionCreateView(LoginRequiredMixin, generic.CreateView):
 
 class QuestionUpdateView(LoginRequiredMixin, UserPassesTestMixin, generic.UpdateView):
     model = Question
-    fields = ['title', 'content']
+    fields = ['title', 'content', 'tags']
     template_name = 'questions/question_update.html'
 
     def test_func(self):

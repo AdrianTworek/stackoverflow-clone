@@ -1,5 +1,5 @@
 from django.contrib import admin
 from users.models import Profile
-from questions.models import Question
+from questions.models import Question, Tag
 
-admin.site.register([Profile, Question])
+admin.site.register([Profile, Question, Tag])
