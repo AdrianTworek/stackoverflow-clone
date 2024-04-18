@@ -7,10 +7,13 @@ class QuestionListView(generic.ListView):
     model = Question
     context_object_name = 'questions'
     ordering = ['-created_at']
+    paginate_by = 10
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        page_obj = context['page_obj']
         context['questions_count'] = self.get_queryset().count()
+        context['page_obj'] = page_obj
         return context
 
 
