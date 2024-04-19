@@ -85,7 +85,7 @@ class TaggedQuestionListView(generic.ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        return Question.objects.filter(tags__name=self.kwargs['slug'])
+        return Question.objects.filter(tags__name=self.kwargs['slug']).order_by('-created_at')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
