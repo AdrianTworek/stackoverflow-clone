@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg mb-5 navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
   <div class="container">
     <a class="navbar-brand h1 mb-0" href="{% url 'main:home' %}"
       >StackOverflow</a
@@ -23,9 +23,13 @@
           <a class="nav-link" href="{% url 'main:questions:tag_list' %}">Tags</a>
         </li>
       </ul>
-      <div>
+      <div class="d-flex w-100 gap-4 ms-2">
+        <form method="get" action="{% url 'main:questions:question_list' %}" class="d-flex w-100">
+          <input class="form-control me-2" type="search" name="q" placeholder="Search for questions..." aria-label="Search" value="{{ request.GET.q }}">
+          <button class="btn btn-outline-success" type="submit">Search</button>
+        </form>
         {% if user.is_authenticated %}
-        <div class="d-flex gap-2">
+        <div class="d-flex gap-2 ms-auto">
           <a class="btn btn-primary" href="{% url 'main:users:profile' %}"
             >Profile</a
           >
