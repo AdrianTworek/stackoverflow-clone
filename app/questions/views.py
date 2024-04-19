@@ -10,6 +10,12 @@ class QuestionListView(generic.ListView):
     ordering = ['-created_at']
     paginate_by = 10
 
+    def get_queryset(self):
+        query = self.request.GET.get('q')
+        if not query:
+            return Question.objects.all().order_by('-created_at')
+        return Question.objects.filter(title__icontains=query).order_by('-created_at')
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         page_obj = context['page_obj']
