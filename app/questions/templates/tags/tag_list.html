@@ -12,11 +12,11 @@
     </div>
     <div>
       {% for tag in tags %}
-        <div class="card my-3">
+        <a href="{% url 'main:questions:tagged_question_list' tag.name %}" class="card my-3" style="text-decoration: none;">
           <div class="card-body">
             <strong>#{{ tag.name }}</strong> | {{ tag.questions.count }} questions
           </div> 
-        </div>
+        </a>
       {% endfor %}
     </div>
   </div>

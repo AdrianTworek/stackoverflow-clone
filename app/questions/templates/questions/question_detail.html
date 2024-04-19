@@ -16,7 +16,7 @@
         <p class="card-text">{{ question.content }}</p>
         <div class="mb-2">
           {% for tag in question.tags.all %}
-            <span class="badge bg-dark text-white">{{ tag.name }}</span>
+            <a href="{% url 'main:questions:tagged_question_list' tag.name %}" class="badge bg-dark text-white" style="text-decoration: none;">{{ tag.name }}</a>
           {% endfor %}
         </div>
       </div>

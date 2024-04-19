@@ -6,8 +6,15 @@
 
 {% block content %}
   <div class="container">
+    {% if tag %}
+      <a href="{% url 'main:questions:question_list' %}" class="btn btn-sm btn-secondary mb-4">Back to Questions</a>
+    {% endif %}
     <div class="d-flex align-items-center justify-content-between">
-      <h2>Questions: {{ questions_count }}</h2>
+      {% if tag %}
+        <h2>Questions with #{{ tag }}: {{ questions_count }}</h2>
+      {% else %}
+         <h2>Questions: {{ questions_count }}</h2>
+      {% endif %}
       <a href="{% url 'main:questions:question_create' %}" class="btn btn-warning">Ask a Question</a>
     </div>
     <nav class="d-flex align-items-center gap-2 mt-2" aria-label="Questions page navigation">
@@ -27,7 +34,7 @@
           <div class="card-body">
             <div class="mb-2">
               {% for tag in question.tags.all %}
-                <span class="badge bg-dark text-white">{{ tag.name }}</span>
+                <a href="{% url 'main:questions:tagged_question_list' tag.name %}" class="badge bg-dark text-white" style="text-decoration: none;">{{ tag.name }}</a>
               {% endfor %}
             </div>
             <h5 class="card-title">{{ question.title }}</h5>

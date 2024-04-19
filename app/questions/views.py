@@ -77,3 +77,18 @@ class TagCreateView(LoginRequiredMixin, generic.CreateView):
     def form_valid(self, form):
         form.instance.name = form.instance.name.lower()
         return super().form_valid(form)
+
+
+class TaggedQuestionListView(generic.ListView):
+    model = Question
+    context_object_name = 'questions'
+    paginate_by = 10
+
+    def get_queryset(self):
+        return Question.objects.filter(tags__name=self.kwargs['slug'])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['questions_count'] = self.get_queryset().count()
+        context['tag'] = self.kwargs['slug']
+        return context
