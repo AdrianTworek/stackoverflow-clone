@@ -1,6 +1,6 @@
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.db.models import Count
+from django.db.models import Count, Q
 from .models import Question, Tag
 
 
@@ -14,7 +14,11 @@ class QuestionListView(generic.ListView):
         query = self.request.GET.get('q')
         if not query:
             return Question.objects.all().order_by('-created_at')
-        return Question.objects.filter(title__icontains=query).order_by('-created_at')
+        return Question.objects.filter(
+            Q(title__icontains=query) |
+            Q(content__icontains=query) |
+            Q(tags__name__icontains=query)
+        ).distinct().order_by('-created_at')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
