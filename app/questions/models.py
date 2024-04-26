@@ -22,3 +22,13 @@ class Question(AbstractModel):
 
     def get_absolute_url(self):
         return reverse("main:questions:question_detail", kwargs={"pk": self.pk})
+
+
+class Answer(AbstractModel):
+    content = models.TextField()
+    question = models.ForeignKey(
+        Question, on_delete=models.CASCADE, related_name='answers')
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"Answer to '{self.question.title}'"
