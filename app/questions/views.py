@@ -1,7 +1,7 @@
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Count, Q
-from .models import Question, Tag
+from .models import Question, Tag, Answer
 
 
 class QuestionListView(generic.ListView):
@@ -30,6 +30,12 @@ class QuestionListView(generic.ListView):
 
 class QuestionDetailView(generic.DetailView):
     model = Question
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        question = self.get_object()
+        context['answers'] = question.answers.all().order_by('-created_at')
+        return context
 
 
 class QuestionCreateView(LoginRequiredMixin, generic.CreateView):
@@ -102,3 +108,43 @@ class TaggedQuestionListView(generic.ListView):
         context['questions_count'] = self.get_queryset().count()
         context['tag'] = self.kwargs['slug']
         return context
+
+
+class AnswerCreateView(LoginRequiredMixin, generic.CreateView):
+    model = Answer
+    fields = ['content']
+    template_name = 'answers/answer_create.html'
+
+    def form_valid(self, form):
+        form.instance.question = Question.objects.get(pk=self.kwargs['pk'])
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return f"/questions/{self.kwargs['pk']}"
+
+
+class AnswerUpdateView(LoginRequiredMixin, UserPassesTestMixin, generic.UpdateView):
+    model = Answer
+    fields = ['content']
+    template_name = 'answers/answer_update.html'
+
+    def test_func(self):
+        answer = self.get_object()
+        return self.request.user == answer.author
+
+    def get_success_url(self):
+        question_id = self.kwargs['question_id']
+        return f"/questions/{question_id}"
+
+
+class AnswerDeleteView(LoginRequiredMixin, UserPassesTestMixin, generic.DeleteView):
+    model = Answer
+
+    def test_func(self):
+        answer = self.get_object()
+        return self.request.user == answer.author
+
+    def get_success_url(self):
+        question_id = self.kwargs['question_id']
+        return f"/questions/{question_id}"
