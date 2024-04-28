@@ -1,8 +1,8 @@
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.db.models import Count, Q
+from django.db.models import Count, Q, F
 from django.shortcuts import get_object_or_404, redirect
-from .models import Question, Tag, Answer, QuestionVote
+from .models import Question, Tag, Answer, QuestionVote, AnswerVote
 
 
 class QuestionListView(generic.ListView):
@@ -35,14 +35,30 @@ class QuestionDetailView(generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         question = self.get_object()
+
         question_votes = QuestionVote.objects.filter(question=question)
         upvotes_count = question_votes.filter(is_upvote=True).count()
         downvotes_count = question_votes.filter(is_upvote=False).count()
         question_votes_number = upvotes_count - downvotes_count
+
         user_vote = question_votes.filter(user=self.request.user).first()
+
+        answers = question.answers.all().order_by('-created_at').annotate(
+            upvotes_count=Count('answervote', filter=Q(
+                answervote__is_upvote=True)),
+            downvotes_count=Count('answervote', filter=Q(
+                answervote__is_upvote=False))
+        ).annotate(
+            votes_number=F('upvotes_count') - F('downvotes_count')
+        )
+
+        for answer in answers:
+            answer.user_vote = answer.answervote_set.filter(
+                user=self.request.user).first()
+
         context['question_votes_number'] = question_votes_number
         context['user_vote'] = user_vote
-        context['answers'] = question.answers.all().order_by('-created_at')
+        context['answers'] = answers
         return context
 
 
@@ -175,3 +191,22 @@ class AnswerDeleteView(LoginRequiredMixin, UserPassesTestMixin, generic.DeleteVi
     def get_success_url(self):
         question_id = self.kwargs['question_id']
         return f"/questions/{question_id}"
+
+
+class AnswerVoteView(LoginRequiredMixin, generic.View):
+    def post(self, request, *args, **kwargs):
+        answer = get_object_or_404(Answer, pk=kwargs['pk'])
+        user = request.user
+        is_upvote = request.POST.get('vote') == 'up'
+        answer_vote = AnswerVote.objects.filter(
+            answer=answer, user=user).first()
+        if answer_vote:
+            if answer_vote.is_upvote == is_upvote:
+                answer_vote.delete()
+            else:
+                answer_vote.is_upvote = is_upvote
+                answer_vote.save()
+        else:
+            AnswerVote.objects.create(
+                answer=answer, user=user, is_upvote=is_upvote)
+        return redirect('main:questions:question_detail', pk=answer.question.pk)

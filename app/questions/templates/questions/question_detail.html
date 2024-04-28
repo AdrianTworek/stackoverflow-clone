@@ -50,30 +50,38 @@
     </div>
     <div class="mt-3">
       {% for answer in answers %}
-        <div class="card my-3">
-          <div class="card-body">
-            <div class="d-flex flex-column gap-2">
-              <div class="d-flex align-items-center gap-2">
-                <img src="{{ answer.author.profile.image.url }}" style="width: 30px; height: 30px; border-radius: 50%;" alt="{{ answer.author.username }}'s avatar" />
-                <span class="text-muted">{{ answer.author.username }}</span>
-                <h6 class="d-flex gap-2 align-items-center card-text mb-0 ms-auto">
-                  <span class="badge bg-secondary text-white">{{ answer.created_at|date:_("d/m/Y, H:i") }}</span>
-                </h6>
+        <div class="d-flex gap-3">
+          <form method="post" action="{% url 'main:questions:answer_vote' question.id answer.id %}" class="d-flex flex-column gap-2 pt-3 align-items-center">
+            {% csrf_token %}
+            <button class="btn {% if answer.user_vote and answer.user_vote.is_upvote %}btn-success{% else %}btn-light{% endif %}" type="submit" name="vote" value="up">+</button>
+            <span class="fs-5 fw-bold">{{ answer.votes_number }}</span>
+            <button class="btn {% if answer.user_vote and not answer.user_vote.is_upvote %}btn-danger{% else %}btn-light{% endif %}" type="submit" name="vote" value="down">-</button>
+          </form>
+          <div class="card my-3 w-100">
+            <div class="card-body">
+              <div class="d-flex flex-column gap-2">
+                <div class="d-flex align-items-center gap-2">
+                  <img src="{{ answer.author.profile.image.url }}" style="width: 30px; height: 30px; border-radius: 50%;" alt="{{ answer.author.username }}'s avatar" />
+                  <span class="text-muted">{{ answer.author.username }}</span>
+                  <h6 class="d-flex gap-2 align-items-center card-text mb-0 ms-auto">
+                    <span class="badge bg-secondary text-white">{{ answer.created_at|date:_("d/m/Y, H:i") }}</span>
+                  </h6>
+                </div>
+                <p>{{ answer.content }}</p>
               </div>
-              <p>{{ answer.content }}</p>
             </div>
+            {% if user == answer.author %}
+              <div class="card-footer d-flex align-items-center">
+                <div class="d-flex gap-1">
+                  <a href="{% url 'main:questions:answer_update' question.id answer.id  %}" class="btn btn-warning">Update</a>
+                  <form method="post" action="{% url 'main:questions:answer_delete' question.id answer.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                  </form>
+                </div>
+              </div>
+            {% endif %}
           </div>
-          {% if user == answer.author %}
-            <div class="card-footer d-flex align-items-center">
-              <div class="d-flex gap-1">
-                <a href="{% url 'main:questions:answer_update' question.id answer.id  %}" class="btn btn-warning">Update</a>
-                <form method="post" action="{% url 'main:questions:answer_delete' question.id answer.id %}">
-                  {% csrf_token %}
-                  <button type="submit" class="btn btn-danger">Delete</button>
-                </form>
-              </div>
-            </div>
-          {% endif %}
         </div>
       {% endfor %}
     </div>

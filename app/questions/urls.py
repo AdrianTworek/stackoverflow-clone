@@ -18,6 +18,8 @@ urlpatterns = [
          views.AnswerUpdateView.as_view(), name='answer_update'),
     path('<int:question_id>/answers/<int:pk>/delete/',
          views.AnswerDeleteView.as_view(), name='answer_delete'),
+    path('<int:question_id>/answers/<int:pk>/vote/',
+         views.AnswerVoteView.as_view(), name='answer_vote'),
     path('tagged/<slug:slug>/', views.TaggedQuestionListView.as_view(),
          name='tagged_question_list'),
     path('tags/', views.TagListView.as_view(), name='tag_list'),
