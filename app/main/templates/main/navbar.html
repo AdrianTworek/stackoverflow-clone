@@ -17,16 +17,31 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'main:questions:question_list' %}">Questions</a>
+          <a class="nav-link" href="{% url 'main:questions:question_list' %}"
+            >Questions</a
+          >
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'main:questions:tag_list' %}">Tags</a>
+          <a class="nav-link" href="{% url 'main:questions:tag_list' %}"
+            >Tags</a
+          >
         </li>
       </ul>
       <div class="d-flex w-100 gap-4 ms-2">
-        <form method="get" action="{% url 'main:questions:question_list' %}" class="d-flex w-100">
-          <input class="form-control me-2" type="search" name="q" placeholder="Search for questions..." aria-label="Search" value="{{ request.GET.q }}">
-          <button class="btn btn-outline-success" type="submit">Search</button>
+        <form
+          method="get"
+          action="{% url 'main:questions:question_list' %}"
+          class="d-flex w-100"
+        >
+          <input
+            class="form-control me-2"
+            type="search"
+            name="q"
+            placeholder="Search for questions..."
+            aria-label="Search"
+            value="{{ request.GET.q }}"
+          />
+          <button class="btn btn-success" type="submit">Search</button>
         </form>
         {% if user.is_authenticated %}
         <div class="d-flex gap-2 ms-auto">
@@ -35,24 +50,27 @@
           >
           <form method="post" action="{% url 'main:users:logout' %}">
             {% csrf_token %}
-            <button class="btn btn-outline-primary me-0" type="submit">
+            <button class="btn btn-outline-light me-0" type="submit">
               Logout
             </button>
           </form>
         </div>
         {% else %}
-        <a
-          class="btn btn-outline-primary"
-          href="{% url 'main:users:login' %}"
-          role="button"
-          >Login</a
-        >
-        <a
-          class="btn btn-primary"
-          href="{% url 'main:users:register' %}"
-          role="button"
-          >Register</a
-        >
+        <div class="d-flex gap-2 ms-auto">
+          <a
+            class="btn btn-primary"
+            href="{% url 'main:users:login' %}"
+            role="button"
+            >Login</a
+          >
+          <a
+            class="btn btn-primary"
+            href="{% url 'main:users:register' %}"
+            role="button"
+            >Register</a
+          >
+        </div>
+
         {% endif %}
       </div>
     </div>
