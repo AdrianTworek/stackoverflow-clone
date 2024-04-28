@@ -41,3 +41,12 @@ class QuestionVote(AbstractModel):
 
     class Meta:
         unique_together = ['question', 'user']
+
+
+class AnswerVote(AbstractModel):
+    answer = models.ForeignKey(Answer, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    is_upvote = models.BooleanField()
+
+    class Meta:
+        unique_together = ['answer', 'user']
