@@ -1,7 +1,8 @@
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Count, Q
-from .models import Question, Tag, Answer
+from django.shortcuts import get_object_or_404, redirect
+from .models import Question, Tag, Answer, QuestionVote
 
 
 class QuestionListView(generic.ListView):
@@ -34,8 +35,34 @@ class QuestionDetailView(generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         question = self.get_object()
+        question_votes = QuestionVote.objects.filter(question=question)
+        upvotes_count = question_votes.filter(is_upvote=True).count()
+        downvotes_count = question_votes.filter(is_upvote=False).count()
+        question_votes_number = upvotes_count - downvotes_count
+        user_vote = question_votes.filter(user=self.request.user).first()
+        context['question_votes_number'] = question_votes_number
+        context['user_vote'] = user_vote
         context['answers'] = question.answers.all().order_by('-created_at')
         return context
+
+
+class QuestionVoteView(LoginRequiredMixin, generic.View):
+    def post(self, request, *args, **kwargs):
+        question = get_object_or_404(Question, pk=kwargs['pk'])
+        user = request.user
+        is_upvote = request.POST.get('vote') == 'up'
+        question_vote = QuestionVote.objects.filter(
+            question=question, user=user).first()
+        if question_vote:
+            if question_vote.is_upvote == is_upvote:
+                question_vote.delete()
+            else:
+                question_vote.is_upvote = is_upvote
+                question_vote.save()
+        else:
+            QuestionVote.objects.create(
+                question=question, user=user, is_upvote=is_upvote)
+        return redirect('main:questions:question_detail', pk=question.pk)
 
 
 class QuestionCreateView(LoginRequiredMixin, generic.CreateView):

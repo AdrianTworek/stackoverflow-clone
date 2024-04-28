@@ -7,32 +7,40 @@
 {% block content %}
   <div class="container">
     <a href="{% url 'main:questions:question_list' %}" class="btn btn-sm btn-secondary">Back to Questions</a>
-    <div class="card my-3">
-      <div class="card-header">
-        <h2>{{ question.title }}</h2>
-      </div>
-      <div class="card-body">
-        <p>{{ question.body }}</p>
-        <p class="card-text">{{ question.content }}</p>
-        <div class="mb-2">
-          {% for tag in question.tags.all %}
-            <a href="{% url 'main:questions:tagged_question_list' tag.name %}" class="badge bg-dark text-white" style="text-decoration: none;">{{ tag.name }}</a>
-          {% endfor %}
+    <div class="d-flex gap-3">
+      <form method="post" action="{% url 'main:questions:question_vote' question.id %}" class="d-flex flex-column gap-2 pt-3 align-items-center">
+        {% csrf_token %}
+        <button class="btn {% if user_vote and user_vote.is_upvote %}btn-success{% else %}btn-light{% endif %}" type="submit" name="vote" value="up">+</button>
+        <span class="fs-5 fw-bold">{{ question_votes_number }}</span>
+        <button class="btn {% if user_vote and not user_vote.is_upvote %}btn-danger{% else %}btn-light{% endif %}" type="submit" name="vote" value="down">-</button>
+      </form>
+      <div class="card my-3 w-100">
+        <div class="card-header">
+          <h2>{{ question.title }}</h2>
         </div>
-      </div>
-      <div class="card-footer d-flex align-items-center justify-content-between">
-        {% if user == question.author %}
-          <div class="d-flex gap-1">
-            <a href="{% url 'main:questions:question_update' question.id %}" class="btn btn-warning">Update</a>
-            <form method="post" action="{% url 'main:questions:question_delete' question.id %}">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-danger">Delete</button>
-            </form>
+        <div class="card-body">
+          <p>{{ question.body }}</p>
+          <p class="card-text">{{ question.content }}</p>
+          <div class="mb-2">
+            {% for tag in question.tags.all %}
+              <a href="{% url 'main:questions:tagged_question_list' tag.name %}" class="badge bg-dark text-white" style="text-decoration: none;">{{ tag.name }}</a>
+            {% endfor %}
           </div>
-        {% endif %}
-        <div class="d-flex gap-2 justify-content-center align-items-center ms-auto">
-          <h6 class="card-text mb-0"><span class="text-muted">asked by</span> <img src="{{ question.author.profile.image.url }}" style="width: 20px; height: 20px; border-radius: 50%;" alt="{{ question.author.username }}'s avatar" /> {{ question.author.username }}</h6>
-          <span class="badge bg-secondary text-white">{{ question.created_at|date:_("d/m/Y, H:i") }}</span>
+        </div>
+        <div class="card-footer d-flex align-items-center justify-content-between">
+          {% if user == question.author %}
+            <div class="d-flex gap-1">
+              <a href="{% url 'main:questions:question_update' question.id %}" class="btn btn-warning">Update</a>
+              <form method="post" action="{% url 'main:questions:question_delete' question.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Delete</button>
+              </form>
+            </div>
+          {% endif %}
+          <div class="d-flex gap-2 justify-content-center align-items-center ms-auto">
+            <h6 class="card-text mb-0"><span class="text-muted">asked by</span> <img src="{{ question.author.profile.image.url }}" style="width: 20px; height: 20px; border-radius: 50%;" alt="{{ question.author.username }}'s avatar" /> {{ question.author.username }}</h6>
+            <span class="badge bg-secondary text-white">{{ question.created_at|date:_("d/m/Y, H:i") }}</span>
+          </div>
         </div>
       </div>
     </div>
