@@ -35,13 +35,17 @@ class QuestionDetailView(generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         question = self.get_object()
+        user = self.request.user
 
         question_votes = QuestionVote.objects.filter(question=question)
         upvotes_count = question_votes.filter(is_upvote=True).count()
         downvotes_count = question_votes.filter(is_upvote=False).count()
         question_votes_number = upvotes_count - downvotes_count
 
-        user_vote = question_votes.filter(user=self.request.user).first()
+        if user.is_authenticated:
+            user_vote = question_votes.filter(user=user).first()
+        else:
+            user_vote = None
 
         answers = question.answers.all().order_by('-created_at').annotate(
             upvotes_count=Count('answervote', filter=Q(
@@ -52,9 +56,10 @@ class QuestionDetailView(generic.DetailView):
             votes_number=F('upvotes_count') - F('downvotes_count')
         )
 
-        for answer in answers:
-            answer.user_vote = answer.answervote_set.filter(
-                user=self.request.user).first()
+        if user.is_authenticated:
+            for answer in answers:
+                answer.user_vote = answer.answervote_set.filter(
+                    user=user).first()
 
         context['question_votes_number'] = question_votes_number
         context['user_vote'] = user_vote
