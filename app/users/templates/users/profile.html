@@ -5,19 +5,44 @@
 {% endblock %} 
 
 {% block content %}
+  {% url 'main:users:profile' as users_profile_url %}
+  {% url 'main:users:user_questions' as user_questions_url %}
+
   <div class="container">
-    <h2>Profile</h2>
-    <div class="card mt-4">
-      <div class="card-body">
-        <h5 class="card-title mb-3"><strong>Username:</strong> {{ user.username }}</h5>
-        <div class="d-flex flex-column gap-2">
-          <p class="card-text mb-0"><strong>Email Address:</strong> {{ user.email|default:"Not available" }}</p>
-          <p class="card-text mb-0"><strong>Bio:</strong> {{ user.profile.bio|default:"Not available" }}</p>
-          <p class="card-text mb-0"><strong>Date joined:</strong> {{ user.date_joined|date:"F d, Y" }}</p>
-          <img src="{{ user.profile.image.url }}" class="img-thumbnail" style="width: 12rem; height: 12rem;" alt="profile pic" />
-          <a href="{% url 'main:users:profile_update' %}" class="btn btn-primary" style="max-width: 10rem;">Edit Profile</a>
+    <ul class="nav nav-tabs mb-3">
+      <li class="nav-item">
+        <a class="nav-link {% if request.path == users_profile_url %}active{% endif %}" href="{% url 'main:users:profile' %}">Profile</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {% if request.path == user_questions_url %}active{% endif %}" href={% url 'main:users:user_questions' %}>My Questions</a>
+      </li>
+    </ul>
+    {% if request.path == users_profile_url %}
+      <h2>Profile Info</h2>
+      <div class="card mt-4">
+        <div class="card-body">
+          <h5 class="card-title mb-3"><strong>Username:</strong> {{ user.username }}</h5>
+          <div class="d-flex flex-column gap-2">
+            <p class="card-text mb-0"><strong>Email Address:</strong> {{ user.email|default:"Not available" }}</p>
+            <p class="card-text mb-0"><strong>Bio:</strong> {{ user.profile.bio|default:"Not available" }}</p>
+            <p class="card-text mb-0"><strong>Date joined:</strong> {{ user.date_joined|date:"F d, Y" }}</p>
+            <img src="{{ user.profile.image.url }}" class="img-thumbnail" style="width: 12rem; height: 12rem;" alt="profile pic" />
+            <a href="{% url 'main:users:profile_update' %}" class="btn btn-primary" style="max-width: 10rem;">Edit Profile</a>
+          </div>
         </div>
       </div>
-    </div>
+    {% elif request.path == user_questions_url %}
+      <h2>All questions you asked: {{ questions_count }}</h2>
+      {% for question in questions %}
+        <div class="card my-3">
+          <div class="card-body">
+            <h5 class="card-title">{{ question.title }}</h5>
+          </div>
+          <div class="card-footer">
+            <a href="{% url 'main:questions:question_detail' question.id %}" class="btn btn-info">View Question</a>
+          </div>
+        </div>
+      {% endfor %}
+    {% endif %}
   </div>
 {% endblock %}
