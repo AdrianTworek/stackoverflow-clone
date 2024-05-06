@@ -10,9 +10,9 @@
     <div class="d-flex gap-3">
       <form method="post" action="{% url 'main:questions:question_vote' question.id %}" class="d-flex flex-column gap-2 pt-3 align-items-center">
         {% csrf_token %}
-        <button class="btn {% if user_vote and user_vote.is_upvote %}btn-success{% else %}btn-light{% endif %}" type="submit" name="vote" value="up">+</button>
+        <button class="btn {% if user_vote and user_vote.is_upvote %}btn-success{% else %}btn-light{% endif %}" type="submit" name="vote" value="up" {% if not user.is_authenticated %}disabled{% endif %}>+</button>
         <span class="fs-5 fw-bold">{{ question_votes_number }}</span>
-        <button class="btn {% if user_vote and not user_vote.is_upvote %}btn-danger{% else %}btn-light{% endif %}" type="submit" name="vote" value="down">-</button>
+        <button class="btn {% if user_vote and not user_vote.is_upvote %}btn-danger{% else %}btn-light{% endif %}" type="submit" name="vote" value="down" {% if not user.is_authenticated %}disabled{% endif %}>-</button>
       </form>
       <div class="card my-3 w-100">
         <div class="card-header">
@@ -53,9 +53,9 @@
         <div class="d-flex gap-3">
           <form method="post" action="{% url 'main:questions:answer_vote' question.id answer.id %}" class="d-flex flex-column gap-2 pt-3 align-items-center">
             {% csrf_token %}
-            <button class="btn {% if answer.user_vote and answer.user_vote.is_upvote %}btn-success{% else %}btn-light{% endif %}" type="submit" name="vote" value="up">+</button>
+            <button class="btn {% if answer.user_vote and answer.user_vote.is_upvote %}btn-success{% else %}btn-light{% endif %}" type="submit" name="vote" value="up" {% if not user.is_authenticated %}disabled{% endif %}>+</button>
             <span class="fs-5 fw-bold">{{ answer.votes_number }}</span>
-            <button class="btn {% if answer.user_vote and not answer.user_vote.is_upvote %}btn-danger{% else %}btn-light{% endif %}" type="submit" name="vote" value="down">-</button>
+            <button class="btn {% if answer.user_vote and not answer.user_vote.is_upvote %}btn-danger{% else %}btn-light{% endif %}" type="submit" name="vote" value="down" {% if not user.is_authenticated %}disabled{% endif %}>-</button>
           </form>
           <div class="card my-3 w-100">
             <div class="card-body">
