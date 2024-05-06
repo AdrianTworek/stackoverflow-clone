@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import RegisterForm, UserUpdateForm, ProfileUpdateForm
 from main.decorators import anonymous_required
+from questions.models import Question
 
 
 @anonymous_required(redirect_url='main:home')
@@ -68,3 +69,10 @@ def profile_update(request):
     }
 
     return render(request, 'users/profile_update.html', context)
+
+
+@login_required()
+def user_questions(request):
+    questions = Question.objects.filter(author=request.user)
+    questions_count = questions.count()
+    return render(request, 'users/profile.html', {'questions': questions, 'questions_count': questions_count})
