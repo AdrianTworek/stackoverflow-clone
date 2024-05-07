@@ -24,6 +24,11 @@ class Question(AbstractModel):
         return reverse("main:questions:question_detail", kwargs={"pk": self.pk})
 
 
+class QuestionView(AbstractModel):
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    session = models.CharField(max_length=50)
+
+
 class Answer(AbstractModel):
     content = models.TextField()
     question = models.ForeignKey(
