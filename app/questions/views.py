@@ -2,7 +2,7 @@ from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Count, Q, F
 from django.shortcuts import get_object_or_404, redirect
-from .models import Question, Tag, Answer, QuestionVote, AnswerVote
+from .models import Question, Tag, Answer, QuestionVote, AnswerVote, QuestionView
 
 
 class QuestionListView(generic.ListView):
@@ -37,6 +37,13 @@ class QuestionDetailView(generic.DetailView):
         question = self.get_object()
         user = self.request.user
 
+        if user.is_authenticated and not QuestionView.objects.filter(question=question, session=self.request.session.session_key).exists():
+            QuestionView.objects.create(
+                question=question, session=self.request.session.session_key)
+
+        question_views_count = QuestionView.objects.filter(
+            question=question).count()
+
         question_votes = QuestionVote.objects.filter(question=question)
         upvotes_count = question_votes.filter(is_upvote=True).count()
         downvotes_count = question_votes.filter(is_upvote=False).count()
@@ -62,6 +69,7 @@ class QuestionDetailView(generic.DetailView):
                     user=user).first()
 
         context['question_votes_number'] = question_votes_number
+        context['question_views_count'] = question_views_count
         context['user_vote'] = user_vote
         context['answers'] = answers
         return context
