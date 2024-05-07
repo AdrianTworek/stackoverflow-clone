@@ -38,8 +38,9 @@
           <div class="card-body">
             <h5 class="card-title">{{ question.title }}</h5>
           </div>
-          <div class="card-footer">
+          <div class="card-footer d-flex align-items-center justify-content-between">
             <a href="{% url 'main:questions:question_detail' question.id %}" class="btn btn-info">View Question</a>
+            <span class="badge bg-secondary text-white">{{ question.created_at|date:_("d/m/Y, H:i") }}</span>
           </div>
         </div>
       {% endfor %}

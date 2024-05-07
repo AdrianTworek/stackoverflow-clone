@@ -73,6 +73,7 @@ def profile_update(request):
 
 @login_required()
 def user_questions(request):
-    questions = Question.objects.filter(author=request.user)
+    questions = Question.objects.filter(
+        author=request.user).order_by('-created_at')
     questions_count = questions.count()
     return render(request, 'users/profile.html', {'questions': questions, 'questions_count': questions_count})
