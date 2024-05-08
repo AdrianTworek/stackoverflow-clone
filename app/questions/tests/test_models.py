@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
-from ..models import Tag, Question, Answer
+from ..models import Tag, Question, Answer, QuestionVote, AnswerVote
 
 
 class TagModelTest(TestCase):
@@ -74,3 +74,59 @@ class AnswerModelTest(TestCase):
         answer = Answer.objects.get(id=1)
         expected_object_name = f"Answer to '{answer.question.title}'"
         self.assertEqual(expected_object_name, str(answer))
+
+
+class QuestionVoteModelTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        User.objects.create_user(username='test', password='test')
+        Question.objects.create(
+            title='Test question', content='Test content', author=User.objects.get(id=1))
+
+    def test_toggle_vote(self):
+        question = Question.objects.get(id=1)
+        user = User.objects.get(id=1)
+        vote = QuestionVote.objects.create(
+            question=question, user=user, is_upvote=True)
+        self.assertEqual(vote.is_upvote, True)
+        vote.is_upvote = False
+        vote.save()
+        self.assertEqual(vote.is_upvote, False)
+
+    def test_question_user_unique_together(self):
+        question = Question.objects.get(id=1)
+        user = User.objects.get(id=1)
+        QuestionVote.objects.create(
+            question=question, user=user, is_upvote=True)
+        with self.assertRaises(Exception):
+            QuestionVote.objects.create(
+                question=question, user=user, is_upvote=False)
+
+
+class AnswerVoteModelTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        User.objects.create_user(username='test', password='test')
+        Question.objects.create(
+            title='Test question', content='Test content', author=User.objects.get(id=1))
+        Answer.objects.create(
+            content='Test answer', question=Question.objects.get(id=1), author=User.objects.get(id=1))
+
+    def test_toggle_vote(self):
+        answer = Answer.objects.get(id=1)
+        user = User.objects.get(id=1)
+        vote = AnswerVote.objects.create(
+            answer=answer, user=user, is_upvote=True)
+        self.assertEqual(vote.is_upvote, True)
+        vote.is_upvote = False
+        vote.save()
+        self.assertEqual(vote.is_upvote, False)
+
+    def test_answer_user_unique_together(self):
+        answer = Answer.objects.get(id=1)
+        user = User.objects.get(id=1)
+        AnswerVote.objects.create(
+            answer=answer, user=user, is_upvote=True)
+        with self.assertRaises(Exception):
+            AnswerVote.objects.create(
+                answer=answer, user=user, is_upvote=False)
