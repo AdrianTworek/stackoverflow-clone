@@ -4,7 +4,7 @@ Django-based web application that mimics the functionality of StackOverflow, the
 ## Functionalities
 - User authentication (also with GitHub OAuth)
 - Managing user profile (change bio, profile avatar)
-- Questions CRUD
+- Questions CRUD and pagination
 - Tags creation and attaching them to questions
 - Searching by question's title, description or tags
 - Writing answers
